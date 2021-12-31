@@ -19,11 +19,6 @@ const client = new Client({
 	partials: ['CHANNEL']
 });
 
-// When the client is ready, run this code (only once)
-client.once('ready', () => {
-	console.log(`Logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
-});
-
 // Event collection
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 
