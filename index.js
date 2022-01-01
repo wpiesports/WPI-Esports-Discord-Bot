@@ -1,11 +1,8 @@
 const { Client, Collection, Intents } = require('discord.js');
 const dotenv = require('dotenv').config();
-const Keyv = require('keyv');
+const utilities = require('./utilities');
 const fs = require('fs');
 
-// Database setup
-const prefixes = new Keyv('redis://localhost:6379', { namespace: 'prefix' });
-prefixes.on('error', err => console.error('Keyv connection error:', err));
 
 // Client setup
 const client = new Client({
@@ -55,19 +52,12 @@ client.on('interactionCreate', async interaction => {
 
 // Prefix command handler
 client.on('messageCreate', async message => {
-	// Check for custom prefix
-	let prefix = process.env.PREFIX
-	if (message.guild !== null) {
-		let prefix = await prefixes.get(message.guild.id)
-		if (prefix === undefined) {
-			prefix = process.env.PREFIX
-		}
-	}
+	const prefix = await utilities.getPrefix(message.guild);
 
 	// Argument slicing + finding command
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
-	if (!client.commands.has('prefix' + commandName)) return;
+	if (!client.commands.has('prefix' + commandName)) { return; }
 	const command = client.commands.get('prefix' + commandName);
 
 	// Check for guild only
