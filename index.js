@@ -60,9 +60,11 @@ client.on('messageCreate', async message => {
 	if (!client.commands.has('prefix' + commandName)) { return; }
 	const command = client.commands.get('prefix' + commandName);
 
-	// Check for guild only
-	if (command.data.guildOnly && message.channel.type !== 'GUILD_TEXT') {
-		return message.reply('This command is guild only');
+	// Check permissions
+	if (message.guild !== null) {
+		if (!message.member.permissions.has(command.data.default_permission)) { return; }
+	} else {
+		if (!command.global) { return; }
 	}
 
 	// Run the command
