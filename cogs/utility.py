@@ -11,7 +11,7 @@ class Utility(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot: commands.Bot = bot
 
-    @app_commands.command(name="ping")
+    @app_commands.command(name='ping')
     async def ping(self, interaction: discord.Interaction) -> None:
         """
         Sends the total latency and websock latency
@@ -48,7 +48,7 @@ class Utility(commands.Cog):
 
         return command
 
-    @app_commands.command(name="help")
+    @app_commands.command(name='help')
     async def help(self, interaction: discord.Interaction, command: Optional[str]):
         """
         Provides information about commands
@@ -73,6 +73,15 @@ class Utility(commands.Cog):
             embed = discord.Embed(title=cmd.qualified_name, description=description)
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @commands.command(name='kill')
+    @commands.has_permissions(administrator=True)
+    async def shutdown(self, ctx):
+        """
+        Shuts down the bot
+        """
+        await ctx.send('Shutting down')
+        await self.bot.close()
 
 
 async def setup(bot: commands.Bot) -> None:
