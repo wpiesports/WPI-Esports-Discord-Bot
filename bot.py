@@ -14,9 +14,9 @@ from typing import Optional, Literal
 # Initialize bot
 intents = discord.Intents.default()
 intents.messages = intents.message_content = intents.guild_messages = True
-bot = commands.Bot(command_prefix='!', case_insensitive=True, intents=intents)
+bot = commands.Bot(command_prefix='.', case_insensitive=True, intents=intents)
 bot.remove_command('help')
-default_cogs = ['streaming', 'utility']
+default_cogs = ['messaging', 'streaming', 'utility']
 
 
 # Cog handlers
@@ -128,7 +128,7 @@ async def on_ready():
     """
     Loads default settings
     """
-    # await bot.change_presence(activity=discord.Game(name='esports', start=discord.utils.utcnow()))
+    await bot.change_presence(activity=discord.Game(name='esports', start=discord.utils.utcnow()))
     print("Logged on as {0}".format(bot.user))
 
 
@@ -164,7 +164,6 @@ async def main():
                 await bot.load_extension(f'cogs.{cog}')
                 print(f'Loaded cog {cog.title()}')
 
-            bot.session = session
             await bot.start(os.environ['DISCORD_TOKEN'])
 
 
