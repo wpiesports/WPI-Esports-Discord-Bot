@@ -5,18 +5,25 @@ import traceback
 
 import aiohttp
 import discord
+import dotenv
 
 from discord.ext import commands
 from discord.ext.commands import Greedy
 from typing import Optional, Literal
 
 
+class EsportsBot(commands.Bot): # subclass discord.Bot
+    def __init__(self):
+        super().__init__()
+
+
 # Initialize bot
+dotenv.load_dotenv()
 intents = discord.Intents.default()
 intents.messages = intents.message_content = intents.guild_messages = True
 bot = commands.Bot(command_prefix='.', case_insensitive=True, intents=intents)
 bot.remove_command('help')
-default_cogs = ['messaging', 'streaming', 'utility']
+default_cogs = ['messaging', 'utility']
 
 
 # Cog handlers
