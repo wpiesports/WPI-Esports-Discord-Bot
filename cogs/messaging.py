@@ -48,7 +48,6 @@ class Messaging(commands.Cog):
         # Check for user mentions
         if len(ctx.message.mentions) > 0:
             # Check if users are to be pinged
-
             users = " ".join([x.mention for x in ctx.message.mentions])
             await ctx.send(
                 f'This message mentions {users} - would you like it to ping them? (Y/N)',
@@ -83,14 +82,12 @@ class Messaging(commands.Cog):
         if msg is not None:
             message = await channel.send(msg, files=attachments, allowed_mentions=mention_perms)
             await ctx.send(
-                'Message sent (<https://discordapp.com/channels/' + str(channel.guild.id) + '/' + str(message.channel.id) +
-                '/' + str(message.id) + '>)',
+                f'Message sent (<{message.jump_url}>)',
             )
         elif len(attachments) > 0:
             message = await channel.send(files=attachments)
             await ctx.send(
-                'Message sent (<https://discordapp.com/channels/' + str(channel.guild.id) + '/' + str(message.channel.id) +
-                '/' + str(message.id) + ">)",
+                f'Message sent (<{message.jump_url}>)',
             )
         else:
             await ctx.send('No content to send.')
@@ -107,8 +104,7 @@ class Messaging(commands.Cog):
         else:
             await bot_msg.edit(content=msg)
             await ctx.send(
-                'Message edited (<https://discordapp.com/channels/' + str(bot_msg.guild.id) + '/' +
-                str(bot_msg.channel.id) + '/' + str(bot_msg.id) + '>)'
+                f'Message edited (<{bot_msg.jump_url}>)'
             )
 
     @commands.command(aliases=['echoDelete', 'deleteEcho'])
@@ -122,8 +118,7 @@ class Messaging(commands.Cog):
         else:
             await bot_msg.delete()
             await ctx.send(
-                'Message deleted (<https://discordapp.com/channels/' + str(bot_msg.guild.id) + '/' +
-                str(bot_msg.channel.id) + '/' + str(bot_msg.id) + '>)'
+                f'Message deleted (<{bot_msg.jump_url}>)'
             )
 
     @echo.error
