@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 import sys
 import traceback
@@ -12,18 +13,36 @@ from discord.ext.commands import Greedy
 from typing import Optional, Literal
 
 
-class EsportsBot(commands.Bot): # subclass discord.Bot
-    def __init__(self):
-        super().__init__()
+class EsportsBot(commands.Bot):
+    async def load_settings(self):
+        with open('settings.json', 'r+') as settings:
+            data = settings.read()
+            # Default settings
+            if data == '':
+                self.settings = {
+                    'profile': {
+                        'status': 'online',
+                        'status_message': None,
+                        'activity': None
+                    }
+                }
+                await self.save_settings()
+                return
+
+            self.settings = json.loads(data)
+
+    async def save_settings(self):
+        with open('settings.json', 'w+') as settings:
+            settings.write(json.dumps(self.settings, indent=4))
 
 
 # Initialize bot
 dotenv.load_dotenv()
 intents = discord.Intents.default()
 intents.messages = intents.message_content = intents.guild_messages = True
-bot = commands.Bot(command_prefix='.', case_insensitive=True, intents=intents)
+bot = EsportsBot(command_prefix='.', case_insensitive=True, intents=intents)
 bot.remove_command('help')
-default_cogs = ['messaging', 'utility']
+default_cogs = ['esports_lab', 'messaging', 'utility']
 
 
 # Cog handlers
@@ -69,6 +88,15 @@ async def list_cogs(ctx: commands.Context):
     Lists the cogs available and their current status
     """
     await ctx.send(f'__Loaded Cogs__\n{os.linesep.join([x.title() for x in bot.extensions])}')
+
+
+@bot.command(name='refresh')
+async def refresh_settings(ctx: commands.Context):
+    """
+    Reloads the bots settings
+    """
+    await ctx.bot.load_settings()
+    await ctx.send('Successfully reloaded settings')
 
 
 # Command syncing
@@ -135,6 +163,7 @@ async def on_ready():
     """
     Loads default settings
     """
+    await bot.load_settings()
     await bot.change_presence(activity=discord.Game(name='esports', start=discord.utils.utcnow()))
     print("Logged on as {0}".format(bot.user))
 
